@@ -16,9 +16,6 @@ var io = require('socket.io').listen(app.listen(8080,'0.0.0.0',function(){
 	console.log(chalk.green.bold("[SERVER] IPV4 Server running at 8080"));
 }));
 
-/*var io6 = require('socket.io').listen(app.listen(8080,'2001:b07:a72:ca77:9487:c5ba:1d08:4a66',function(){
-	console.log("[SERVER] IPV6 Server running at 8080");
-}));*/
 var sources;
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
