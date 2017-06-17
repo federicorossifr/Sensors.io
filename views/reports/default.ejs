@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <%- include ../templates/head.ejs %>
+  <body id="main" onload="loadReport()">
+    <h1>Report</h1>
+    <h4 class="noprint">
+    		<a class="btn btn-default" href="/"><i class="fa fa-arrow-left"></i> Back</a>
+    		<a disabled class="btn btn-primary" id="printButton" onclick="window.print()"><i class="fa fa-spin fa-spinner"></i></a>
+    </h4>
+    <% for(var sensor in query) { %>
+    	<div id="s_<%= sensor %>" class="well.card-1">
+    		<h3 class=""><%= sensor %>: <%= query[sensor].query.replace("&"," ").replace("<t<","<").replace(">t>",">") %></h3>
+    		<pre style="display:none" class="data-url"><%="\/api\/sensors\/"+sensor+"\/data\/"+query[sensor].query+"\/json"%></pre>
+    		<pre style="display:none" class="plot-url"><%="\/api\/sensors\/"+sensor+"\/data\/"+query[sensor].query+"\/plot\/"+query[sensor].fields%></pre>
+    		<pre class="data-out"><i class="fa fa-spin fa-spinner"></i></pre>
+    		<pre><i class="fa fa-spin fa-spinner img-spinner"></i><img class="plot-img img-responsive"></pre>
+    	</div>
+    <% } %>
+    <div>
+      <h3>Results were computed from user query:</h3>
+      <pre><%= JSON.stringify(query,null,'\t')  %></pre>
+    </div>
+  </body>
+
+  <script type="text/javascript">
+  	function loadReport() {
+  		$('[id^=s_]').each(function() {
+  			var dataUrl = $(this).find("pre.data-url").text();
+  			var plotUrl = $(this).find("pre.plot-url").text();
+  			var sensorName = $(this).attr("id").split("s_")[1];
+  			var sensorContainer = $(this);
+			var getPromise = $.get(dataUrl);
+			getPromise.then(function(result) {
+				sensorContainer.find("pre.data-out").text(JSON.stringify(result,null,'\t'));
+			});
+ 
+	        var imgPromise = loadImagePromise(plotUrl,sensorContainer.find("img.plot-img"));
+	        imgPromise.then(done => {
+	            sensorContainer.find("i.img-spinner").hide();
+	        });
+
+	        Promise.all([getPromise,imgPromise]).then(done => {
+	            $("#printButton").removeAttr("disabled");
+	            $("#printButton").text("Print");
+	        })
+	  	})
+	}
+
+    function loadImagePromise(src,image) {
+      var deferred = $.Deferred();
+      image.on("load",function() {
+        deferred.resolve();
+      })
+      image.attr("src",src);
+      return deferred.promise();
+    }
+
+
+
+  </script>
+</html>

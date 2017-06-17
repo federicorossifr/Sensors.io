@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <%- include templates/head.ejs %>
+  <body>
+    <%- include templates/header.ejs %>
+
+    <main id="main">
+	    <div class="well card-1">
+	      <h3><i class="fa fa-thermometer-three-quarters"></i> Available sensors (<%= Object.keys(sources).length %>)</h3>
+	        <div class="list-group">
+	          <% for(var i in sources) { %>
+	            <a class="list-group-item list-group-item-info" href="./api/sensors/<%= i %>"><%= i %></a>
+	          <% } %>
+	        </div>
+	    </div>
+
+	    <div class="well card-1">
+	      <h3><i class="fa fa-database"></i> Aggregate data</h3>
+	      <div id="sensor0" class="well card-1">
+	        <form class="form-inline" class="sensorSelectForm">
+	          <div class="form-group">
+	            <select onchange="handleSelect($(this))" class="form-control sensorSelect">
+	                  <option value="">Select sensor...</option>
+	                <% for(var i in sources) { %>
+	                  <option value="<%= i %>"><%= i %></option>
+	                <% } %>
+	            </select>
+	          </div>
+	        </form>
+
+	        <form class="form-inline" id="query0" style="display:none">
+	          <div class="form-group">
+	            <select  class="form-control headerSelect">
+	            </select>
+
+	            <select class="form-control operator">
+	              <option value="<"><</option>
+	              <option value=">">></option>
+	              <<option value="=">=</option>
+	              <option value="<t<">before</option>
+	              <option value=">t>">after</option>
+	            </select>
+
+	            <input type="text" class="form-control value">
+	            <button onclick="del($(this).parent())" class="btn btn-danger delQuery" style="display:none"><i class="fa fa-minus"></i></button>
+	          </div>
+	        </form>
+	        <button onclick="newQuery($(this))" class="btn btn-primary addQuery" style="display: none"><i class="fa fa-plus"></i> Query</button>
+	        <button onclick="del($(this))" class="btn btn-danger delSensor" style="display:none"><i class="fa fa-minus"></i> Sensor</button>
+	      </div>
+	      <button class="btn btn-primary" onclick="addSensor($(this))"><i class="fa fa-plus"></i> Sensor</button>
+	      <button class="btn btn-success" onclick="requestAggregatePlot($(this))"><i class="fa fa-area-chart"></i> Plot</button>
+	      <div data-report-type="default" class="btn-group">
+	        <button type="button" id="reportButton" onclick="followReport($(this))" class="btn btn-success"><i class="fa  fa-file-code-o"></i> Report</button>
+	        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	          <span class="caret"></span>
+	          <span class="sr-only">Toggle Dropdown</span>
+	        </button>
+	        <ul class="dropdown-menu report-types">
+	          <li><a data-value="default">Raw data</a></li>
+	          <li><a data-value="tabled">Data table</a></li>
+	        </ul>
+	      </div>
+	    <img class="img-responsive" id="aggregate-plot"></img>
+	</div>
+  </body>
+  <script type="text/javascript">
+
+      $(".report-types").on("click","li a ",function() {
+          var value = $(this).attr("data-value");
+          $(this).parent().parent().parent().attr("data-report-type",value);
+          $("#reportButton").html("<i class='fa  fa-file-code-o'></i> "+$(this).text());
+      })
+
+      function addSensor(b) {
+        var lastSensor = b.parent().find("[id^=sensor]").last();
+        var nextNum = parseInt(lastSensor.attr("id").split("query")[1])+1;
+        var nextSensor = lastSensor.clone();
+        nextSensor.find(".delSensor").show();
+        nextSensor.attr("id","sensor"+nextNum);
+        nextSensor.submit(function(e) {return false});
+        nextSensor.insertAfter(lastSensor);
+        nextSensor.find(".sensorSelect").trigger("change");
+      }
+
+      function newQuery(b) {
+        var lastQuery = b.parent().find("[id^='query']").last();
+        var nextNum = parseInt(lastQuery.attr("id").split("query")[1])+1;
+        var nextQuery = lastQuery.clone();
+        nextQuery.find(".delQuery").show();
+        nextQuery.attr("id","query"+nextNum);
+        nextQuery.find(".queryNumber").text(nextNum);
+        nextQuery.submit(function(e) {return false});
+        nextQuery.insertAfter(lastQuery);
+      }
+
+      function del(button) {
+        button.parent().remove();
+      }
+
+      var socket = io.connect();
+      socket.on("hello",function() {
+        //$("#showMe").show("normal");
+      });
+
+      var sources = <%- JSON.stringify(sources) %>;
+      function handleSelect(s) {
+        var val = $(s).val();
+        var sensorContainer = $(s).parent().parent().parent();
+        var firstQuery = sensorContainer.find("[id^='query']").first();
+        var addButton = sensorContainer.find(".addQuery").first();
+        sensorContainer.find("[id^='query']").not(":first").remove();
+        if(!sources[val]) {
+          sensorContainer.find("[id^='query']").hide();
+          addButton.hide();
+          return;
+        }
+        var headers = sources[val].headers;
+        firstQuery.find(".headerSelect").empty();
+        for(var i in headers) {
+          firstQuery.find(".headerSelect").append($("<option value='"+headers[i]+"'>"+headers[i]+"</option>"));
+        }
+        addButton.show();
+        firstQuery.show();
+      }
+
+      function buildQuery() {
+        var data = {};
+        var sensors = $("[id^=sensor").filter(function() {
+          return $(this).find(".sensorSelect").val() != "";
+        });
+        $.each(sensors,function(key,value) {
+          var sensorName = $(value).find(".sensorSelect").val();
+          var queryObject = buildSensorQuery($(value));
+          data[sensorName] = {'query':undefined,'fields':undefined};
+          data[sensorName].query = queryObject.q;
+          data[sensorName].fields = queryObject.f;
+        })
+        return data;
+      }
+
+      function followReport(caller) {
+          var curUrl = window.location.href;
+          if(!curUrl.endsWith("/")) curUrl+="/";
+          var reportType = caller.parent().attr("data-report-type");
+          window.location.href = curUrl+"report/"+reportType+"?q="+encodeURIComponent(JSON.stringify(buildQuery()));
+      }
+
+      function requestAggregatePlot(button) {
+      	button.html("<i class='fa fa-spin fa-spinner'></i> Plot")
+        $("#aggregate-plot").on("load",function() {
+	      	button.html("<i class='fa fa-area-chart'></i> Plot")
+        });
+        $("#aggregate-plot").attr("src","/api/aggregate/plot?q="+encodeURIComponent(JSON.stringify(buildQuery())));
+      }
+
+      function buildSensorQuery(sensor) {
+        var queries =  sensor.find("[id^=query]");
+        var fields = "";
+        var query="";
+        $.each(queries,function(key,value) {
+          var field = $(value).find(".headerSelect").val();
+          fields+=field;
+          var operator = $(value).find(".operator").val();
+          var value = $(value).find(".value").val();
+          query+=field+operator+value;
+          if(key < queries.length -1) {query+='&'; fields+='&';}
+        })
+        return {'q':query,'f':fields};
+      }
+  </script>
+</html>
