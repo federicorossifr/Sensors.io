@@ -29,17 +29,18 @@
 		"name":"example",
 		"origin":"http",
 		"origin_options": {
-			"url":"http://samplecsvs.s3.amazonaws.com/TechCrunchcontinentalUSA.csv",
-			"localPath":"downloads/test.csv"
+			"url":"http://url.com",
+			"localPath":"downloads/url.file"
 		},
 		"parser":"csv",
 		"parser_options" : {
-			"filename":"downloads/test.csv",
+			"filename":"downloads/url.file",
 			"skipLines":1,
 			"hasHeaders":true,
 			"headersLine":1,
 			"types":[]
 		},
+		"headers":["headers","header2"],
 		"cachable":true,
 		"public_mask":["name","origin","origin_options"]
 	}

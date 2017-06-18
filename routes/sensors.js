@@ -9,11 +9,11 @@ var sourceManager = require("../sensors_io/lib/source_loader");
 var abs_sensor = require("../sensors_io/lib/abstract_sensor");
 
 router.get('/',function(req,res,next) {
-  var sourceNames = [];
+  var safeSources = [];
   for(var i in req.sources) {
-    sourceNames.push[i];
+    safeSources.push(sourceManager.getSourcePublicMembers(req.sources[i]));
   }
-  res.json(sourceNames);
+  res.json(safeSources);
 });
 
 router.use('/:name',function(req,res,next) {

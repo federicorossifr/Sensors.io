@@ -38,7 +38,7 @@ var sensor = {
 				    		var cloned = JSON.parse(JSON.stringify(result));
 				  			var queries = query.split('&');
 						  	for(var i in queries) {
-							    var op = /(>t)?(<t)?[<,>,=]/g.exec(queries[i])[0];
+							    var op = /(>t)?(<t)?[<,>,=,*]/g.exec(queries[i])[0];
 							    queries[i] = queries[i].split(op);
 							    switch(op) {
 							      case '>': cloned.data = cloned.data.filter(obj => {return obj[queries[i][0]] > queries[i][1]}); break;
@@ -46,6 +46,7 @@ var sensor = {
 							      case '=': cloned.data = cloned.data.filter(obj => {return obj[queries[i][0]] == queries[i][1]}); break;
 							      case '<t<': cloned.data = cloned.data.filter(obj => {return moment(obj[queries[i][0]]).isBefore(queries[i][1])}); break;
 							      case '>t>': cloned.data = cloned.data.filter(obj => {return moment(obj[queries[i][0]]).isAfter(queries[i][1])}); break;
+							      case '*':
 							      default: break;
 							    }
 								}
