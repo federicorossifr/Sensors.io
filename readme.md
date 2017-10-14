@@ -23,3 +23,5 @@ At the moment the following origins are available:
 # Tasks
 You can set up automated tasks that are loaded from the default task folder, specifying task code and execution interval.
 
+# Dependencies
+In order to install correct dependencies, take a look at https://github.com/Automattic/node-canvas
