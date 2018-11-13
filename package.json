@@ -1,0 +1,22 @@
+{
+  "name": "sensors-io",
+  "version": "1.0.0",
+  "description": "GNS-like library",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/federicorossifr/Sensors.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/federicorossifr/Sensors.io/issues"
+  },
+  "homepage": "https://github.com/federicorossifr/Sensors.io#readme"
+}
