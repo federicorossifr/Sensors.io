@@ -1,0 +1,47 @@
+{
+	"ftpexample":{
+		"name":"ftpexample",
+		"origin":"ftp",
+		"origin_options":{
+			"connection": {
+				"host":"127.0.0.1",
+				"port":21,
+				"user":"user",
+				"password":"pass"
+			},
+			"remotePath": "foo/bar.file",
+			"localPath": "downloads/foo.file"
+		},
+		"parser":"csv",
+		"parser_options":{
+			"filename": "downloads/foo.file",
+			"skipLines":4,
+			"headers":["header1","header2"],
+			"types":["float","int"]
+		},
+		"timestamp_field":"header1",
+		"headers":["header1","header2"],
+		"cachable":true,
+		"geopos":{"lat":0, "long":0},
+		"public_mask":["name","timestamp_field","headers","geopos"]
+	},
+	"example": {
+		"name":"example",
+		"origin":"http",
+		"origin_options": {
+			"url":"http://url.com",
+			"localPath":"downloads/url.file"
+		},
+		"parser":"csv",
+		"parser_options" : {
+			"filename":"downloads/url.file",
+			"skipLines":1,
+			"hasHeaders":true,
+			"headersLine":1,
+			"types":[]
+		},
+		"headers":["headers","header2"],
+		"cachable":true,
+		"public_mask":["name","origin","origin_options"]
+	}
+}
