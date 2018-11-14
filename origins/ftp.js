@@ -1,7 +1,6 @@
 var fs = require('fs');
 var path = require('path');
 var ftp = require("ftp");
-var Promise = require("bluebird");
 var PromiseFtp = require("promise-ftp");
 
 var existsPromise = function(path) {

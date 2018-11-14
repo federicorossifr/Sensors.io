@@ -1,5 +1,5 @@
 {
-	"ftpexample":{
+	"ftpExample":{
 		"name":"ftpexample",
 		"origin":"ftp",
 		"origin_options":{
@@ -25,8 +25,8 @@
 		"geopos":{"lat":0, "long":0},
 		"public_mask":["name","timestamp_field","headers","geopos"]
 	},
-	"example": {
-		"name":"example",
+	"httpExample": {
+		"name":"httpExample",
 		"origin":"http",
 		"origin_options": {
 			"url":"http://url.com",
