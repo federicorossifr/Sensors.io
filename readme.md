@@ -1,4 +1,4 @@
-# Sensors_IO
+# Sensors.io
 
 Sensor_IO is global-sensor-network-like web application built with ExpressJS and it
 is completely based on JSON objects and API requests.
