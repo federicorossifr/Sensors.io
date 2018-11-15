@@ -7,8 +7,8 @@ var task = {
     console.log("[SCHEDULED TASK] Executing task: "+this.name);
     loader.get(sources => {
       for(var i in sources)
-        abstractSensor.acquireFactory(sources[i]).acquireAll(results => {
-        });
+        if(sources[i].enabled)
+          abstractSensor.acquireFactory(sources[i]).acquireAll(results => {});
     })
   }
 

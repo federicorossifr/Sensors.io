@@ -22,6 +22,7 @@
   "dependencies": {
     "chart.js": "^2.7.3",
     "chartjs-node": "^1.7.1",
+    "fast-csv": "^2.4.1",
     "ftp": "^0.3.10",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.23",

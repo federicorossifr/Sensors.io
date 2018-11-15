@@ -23,25 +23,27 @@
 		"headers":["header1","header2"],
 		"cachable":true,
 		"geopos":{"lat":0, "long":0},
-		"public_mask":["name","timestamp_field","headers","geopos"]
+		"public_mask":["name","timestamp_field","headers","geopos"],
+		"enabled":0
 	},
 	"httpExample": {
 		"name":"httpExample",
 		"origin":"http",
 		"origin_options": {
-			"url":"http://url.com",
-			"localPath":"downloads/url.file"
+			"url":"https://people.sc.fsu.edu/~jburkardt/data/csv/grades.csv",
+			"localPath":"downloads/grades.csv"
 		},
 		"parser":"csv",
 		"parser_options" : {
-			"filename":"downloads/url.file",
+			"filename":"downloads/grades.csv",
 			"skipLines":1,
 			"hasHeaders":true,
 			"headersLine":1,
-			"types":[]
+			"types":["string","string","string","float","float","float","float","float","string"]
 		},
-		"headers":["headers","header2"],
+		"headers":[],
 		"cachable":true,
-		"public_mask":["name","origin","origin_options"]
+		"public_mask":["name","origin","origin_options"],
+		"enabled":1
 	}
 }
